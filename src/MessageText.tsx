@@ -152,7 +152,7 @@ export function MessageText<TMessage extends IMessage = IMessage> ({
           customTextStyle,
         ]}
         parse={[
-          ...(parsePatterns ? parsePatterns(linkStyle as TextStyle) : []),
+          ...(parsePatterns ? parsePatterns(linkStyle as any) : []),
           { type: 'url', style: linkStyle, onPress: onUrlPress },
           { type: 'phone', style: linkStyle, onPress: onPhonePress },
           { type: 'email', style: linkStyle, onPress: onEmailPress },
