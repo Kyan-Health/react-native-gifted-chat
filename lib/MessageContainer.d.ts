@@ -1,9 +1,9 @@
-import React, { RefObject } from 'react';
-import PropTypes from 'prop-types';
-import { FlatList, ListRenderItemInfo, NativeSyntheticEvent, NativeScrollEvent, StyleProp, ViewStyle } from 'react-native';
-import { LoadEarlierProps } from './LoadEarlier';
-import Message from './Message';
-import { User, IMessage, Reply } from './Models';
+import React, { RefObject } from "react";
+import PropTypes from "prop-types";
+import { FlatList, ListRenderItemInfo, NativeSyntheticEvent, NativeScrollEvent, StyleProp, ViewStyle, LayoutChangeEvent } from "react-native";
+import { LoadEarlierProps } from "./LoadEarlier";
+import Message from "./Message";
+import { User, IMessage, Reply } from "./Models";
 export interface MessageContainerProps<TMessage extends IMessage> {
     messages?: TMessage[];
     isTyping?: boolean;
@@ -20,7 +20,7 @@ export interface MessageContainerProps<TMessage extends IMessage> {
     forwardRef?: RefObject<FlatList<TMessage>>;
     renderChatEmpty?(): React.ReactNode;
     renderFooter?(props: MessageContainerProps<TMessage>): React.ReactNode;
-    renderMessage?(props: Message['props']): React.ReactElement;
+    renderMessage?(props: Message["props"]): React.ReactElement;
     renderLoadEarlier?(props: LoadEarlierProps): React.ReactNode;
     renderTypingIndicator?(): React.ReactNode;
     scrollToBottomComponent?(): React.ReactNode;
@@ -29,12 +29,18 @@ export interface MessageContainerProps<TMessage extends IMessage> {
     infiniteScroll?: boolean;
     isLoadingEarlier?: boolean;
     handleOnScroll?(event: NativeSyntheticEvent<NativeScrollEvent>): void;
+    shouldStickMessageToTop?: boolean;
 }
 interface State {
     showScrollBottom: boolean;
     hasScrolled: boolean;
+    listViewHeight: number;
+    index0: number;
+    index1: number;
 }
 export default class MessageContainer<TMessage extends IMessage = IMessage> extends React.PureComponent<MessageContainerProps<TMessage>, State> {
+    private isInialized;
+    private viewRef;
     static defaultProps: {
         messages: never[];
         user: {};
@@ -80,9 +86,12 @@ export default class MessageContainer<TMessage extends IMessage = IMessage> exte
     state: {
         showScrollBottom: boolean;
         hasScrolled: boolean;
+        listViewHeight: number;
+        index0: number;
+        index1: number;
     };
     renderTypingIndicator: () => string | number | boolean | React.JSX.Element | Iterable<React.ReactNode> | null | undefined;
-    renderFooter: () => string | number | boolean | React.JSX.Element | Iterable<React.ReactNode> | null | undefined;
+    renderFooter: () => React.JSX.Element;
     renderLoadEarlier: (props: LoadEarlierProps) => string | number | boolean | React.JSX.Element | Iterable<React.ReactNode> | null | undefined;
     scrollTo(options: {
         animated?: boolean;
@@ -90,12 +99,12 @@ export default class MessageContainer<TMessage extends IMessage = IMessage> exte
     }): void;
     scrollToBottom: (animated?: boolean) => void;
     handleOnScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
-    renderRow: ({ item, index }: ListRenderItemInfo<TMessage>) => React.ReactElement | null;
+    renderRow: ({ item, index, }: ListRenderItemInfo<TMessage>) => React.ReactElement | null;
     renderChatEmpty: () => string | number | boolean | React.JSX.Element | Iterable<React.ReactNode> | null | undefined;
     renderHeaderWrapper: () => React.JSX.Element;
     renderScrollBottomComponent(): string | number | boolean | React.JSX.Element | Iterable<React.ReactNode> | null | undefined;
     renderScrollToBottomWrapper(): React.JSX.Element;
-    onLayoutList: () => void;
+    onLayoutList: (event: LayoutChangeEvent) => void;
     onEndReached: ({ distanceFromEnd }: {
         distanceFromEnd: number;
     }) => void;

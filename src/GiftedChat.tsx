@@ -38,7 +38,7 @@ import { GiftedChatContext } from "./GiftedChatContext";
 import { InputToolbar, InputToolbarProps } from "./InputToolbar";
 import { LoadEarlier, LoadEarlierProps } from "./LoadEarlier";
 import Message from "./Message";
-import MessageContainer from "./MessageContainer";
+import MessageContainer, { MessageContainerProps } from "./MessageContainer";
 import { MessageImage, MessageImageProps } from "./MessageImage";
 import { MessageText, MessageTextProps } from "./MessageText";
 import {
@@ -67,7 +67,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 dayjs.extend(localizedFormat);
 
 export interface GiftedChatProps<TMessage extends IMessage = IMessage>
-  extends Partial<Omit<MessageContainer<TMessage>, "scrollToBottom">> {
+  extends Partial<Omit<MessageContainerProps<TMessage>, "scrollToBottom">> {
   /* Message container ref */
   messageContainerRef?: React.RefObject<FlatList<IMessage>>;
   /* text input ref */
@@ -154,6 +154,8 @@ export interface GiftedChatProps<TMessage extends IMessage = IMessage>
   timeTextStyle?: LeftRightStyle<TextStyle>;
   /** If you use translucent status bar on Android, set this option to true. Ignored on iOS. */
   isStatusBarTranslucentAndroid?: boolean;
+  /* Controls whether messages should stick to the top when keyboard opens */
+  shouldStickMessageToTop?: boolean;
   /* Custom action sheet */
   actionSheet?(): {
     showActionSheetWithOptions: (
@@ -274,6 +276,7 @@ function GiftedChat<TMessage extends IMessage = IMessage>(
     minComposerHeight = MIN_COMPOSER_HEIGHT,
     maxComposerHeight = MAX_COMPOSER_HEIGHT,
     isKeyboardInternallyHandled = true,
+    shouldStickMessageToTop = false,
     isStatusBarTranslucentAndroid,
   } = props;
 
@@ -313,6 +316,22 @@ function GiftedChat<TMessage extends IMessage = IMessage>(
               keyboard.height.value -
               (keyboard.height.value > 120 && messages.length <= 2 ? 120 : 0)
             ) + keyboardOffsetBottom.value,
+        },
+      ],
+    }),
+    [keyboard, keyboardOffsetBottom, messages]
+  );
+
+  const contentStyleAnim2 = useAnimatedStyle(
+    () => ({
+      transform: [
+        {
+          translateY: -(
+            -(
+              keyboard.height.value -
+              (keyboard.height.value > 120 && messages.length <= 2 ? 120 : 0)
+            ) + keyboardOffsetBottom.value
+          ),
         },
       ],
     }),
@@ -643,7 +662,18 @@ function GiftedChat<TMessage extends IMessage = IMessage>(
                 isKeyboardInternallyHandled && contentStyleAnim,
               ]}
             >
-              {renderMessages}
+              {shouldStickMessageToTop ? (
+                <Animated.View
+                  style={[
+                    styles.fill,
+                    isKeyboardInternallyHandled && contentStyleAnim2,
+                  ]}
+                >
+                  {renderMessages}
+                </Animated.View>
+              ) : (
+                renderMessages
+              )}
               <Animated.View
                 style={[isKeyboardInternallyHandled && contentStyleAnim1]}
               >

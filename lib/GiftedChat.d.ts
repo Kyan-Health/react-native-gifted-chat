@@ -11,7 +11,7 @@ import { GiftedAvatar } from "./GiftedAvatar";
 import { InputToolbar, InputToolbarProps } from "./InputToolbar";
 import { LoadEarlier, LoadEarlierProps } from "./LoadEarlier";
 import Message from "./Message";
-import MessageContainer from "./MessageContainer";
+import MessageContainer, { MessageContainerProps } from "./MessageContainer";
 import { MessageImage, MessageImageProps } from "./MessageImage";
 import { MessageText, MessageTextProps } from "./MessageText";
 import { IMessage, LeftRightStyle, MessageAudioProps, MessageVideoProps, Reply, User } from "./Models";
@@ -20,7 +20,7 @@ import { Send, SendProps } from "./Send";
 import { SystemMessage, SystemMessageProps } from "./SystemMessage";
 import { Time, TimeProps } from "./Time";
 import * as utils from "./utils";
-export interface GiftedChatProps<TMessage extends IMessage = IMessage> extends Partial<Omit<MessageContainer<TMessage>, "scrollToBottom">> {
+export interface GiftedChatProps<TMessage extends IMessage = IMessage> extends Partial<Omit<MessageContainerProps<TMessage>, "scrollToBottom">> {
     messageContainerRef?: React.RefObject<FlatList<IMessage>>;
     textInputRef?: React.RefObject<TextInput>;
     messages?: TMessage[];
@@ -71,6 +71,7 @@ export interface GiftedChatProps<TMessage extends IMessage = IMessage> extends P
     timeTextStyle?: LeftRightStyle<TextStyle>;
     /** If you use translucent status bar on Android, set this option to true. Ignored on iOS. */
     isStatusBarTranslucentAndroid?: boolean;
+    shouldStickMessageToTop?: boolean;
     actionSheet?(): {
         showActionSheetWithOptions: (options: ActionSheetOptions, callback: (buttonIndex: number) => void | Promise<void>) => void;
     };
