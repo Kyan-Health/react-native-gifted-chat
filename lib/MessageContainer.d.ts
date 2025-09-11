@@ -1,9 +1,9 @@
-import React, { RefObject } from "react";
-import PropTypes from "prop-types";
-import { FlatList, ListRenderItemInfo, NativeSyntheticEvent, NativeScrollEvent, StyleProp, ViewStyle, LayoutChangeEvent } from "react-native";
-import { LoadEarlierProps } from "./LoadEarlier";
-import Message from "./Message";
-import { User, IMessage, Reply } from "./Models";
+import React, { RefObject } from 'react';
+import PropTypes from 'prop-types';
+import { FlatList, ListRenderItemInfo, NativeSyntheticEvent, NativeScrollEvent, StyleProp, ViewStyle, LayoutChangeEvent } from 'react-native';
+import { LoadEarlierProps } from './LoadEarlier';
+import Message from './Message';
+import { User, IMessage, Reply } from './Models';
 export interface MessageContainerProps<TMessage extends IMessage> {
     messages?: TMessage[];
     isTyping?: boolean;
@@ -20,7 +20,7 @@ export interface MessageContainerProps<TMessage extends IMessage> {
     forwardRef?: RefObject<FlatList<TMessage>>;
     renderChatEmpty?(): React.ReactNode;
     renderFooter?(props: MessageContainerProps<TMessage>): React.ReactNode;
-    renderMessage?(props: Message["props"]): React.ReactElement;
+    renderMessage?(props: Message['props']): React.ReactElement;
     renderLoadEarlier?(props: LoadEarlierProps): React.ReactNode;
     renderTypingIndicator?(): React.ReactNode;
     scrollToBottomComponent?(): React.ReactNode;
