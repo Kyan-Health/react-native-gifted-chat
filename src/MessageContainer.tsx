@@ -291,10 +291,14 @@ export default class MessageContainer<
             }
 
             if (index === 0 || index === 1) {
-              // console.log(`Height of item ${index}:  `, height);
-
+              // console.log(`Height of item ${index}:  `, height)
               if (index === 0) 
-                if (!this.state.index1 && this.isInialized) 
+                if (
+                  !this.state.index1 &&
+                  this.isInialized &&
+                  this.props.messages?.[0]?.user?._id !== 'user' &&
+                  this.props.messages?.[1]?.user?._id === 'user'
+                ) 
                   this.setState({
                     index1: height,
                   })
@@ -305,7 +309,10 @@ export default class MessageContainer<
                     index0: height,
                   })
                 
-              else 
+              else if (
+                (this.props.messages?.[0]?.user?._id !== 'user' &&
+                  this.props.messages?.[1]?.user?._id === 'user')
+              ) 
                 this.setState({
                   [`index${index}` as keyof State]: height,
                 } as unknown as Pick<State, keyof State>)
@@ -368,11 +375,10 @@ export default class MessageContainer<
 
   onLayoutList = (event: LayoutChangeEvent) => {
     const listViewHeight = event.nativeEvent.layout.height
-    if (listViewHeight !== this.state.listViewHeight) 
+    if (listViewHeight !== this.state.listViewHeight)
       this.setState({
         listViewHeight,
       })
-    
 
     if (
       !this.props.inverted &&
@@ -406,32 +412,37 @@ export default class MessageContainer<
     // Initialize the padding animation value
     const { listViewHeight, index0, index1 } = this.state
     const { shouldStickMessageToTop, messages } = this.props
-    
+
     if (shouldStickMessageToTop && messages!.length > 1) {
-      const initialPadding = listViewHeight - ((index0 || 80) + (index1 || 80) || listViewHeight)
+      const initialPadding =
+        listViewHeight - ((index0 || 80) + (index1 || 80) || listViewHeight)
       this.paddingAnimation.setValue(initialPadding)
     }
   }
-  
-  componentDidUpdate(_prevProps: MessageContainerProps<TMessage>, prevState: State) {
+
+  componentDidUpdate(
+    _prevProps: MessageContainerProps<TMessage>,
+    prevState: State
+  ) {
     // Animate padding when state changes
     const { listViewHeight, index0, index1 } = this.state
     const { shouldStickMessageToTop, messages } = this.props
-    
+
     if (shouldStickMessageToTop && messages!.length > 1) {
-      const newPadding = listViewHeight - ((index0 || 80) + (index1 || 80) || listViewHeight)
-      
+      const newPadding =
+        listViewHeight - ((index0 || 80) + (index1 || 80) || listViewHeight)
+
       // Only animate if the value has changed
-      if (prevState.listViewHeight !== listViewHeight || 
-          prevState.index0 !== index0 || 
-          prevState.index1 !== index1) 
-          
+      if (
+        prevState.listViewHeight !== listViewHeight ||
+        prevState.index0 !== index0 ||
+        prevState.index1 !== index1
+      )
         Animated.timing(this.paddingAnimation, {
           toValue: newPadding,
           duration: 200,
           useNativeDriver: false,
         }).start()
-      
     } else {
       // Reset padding to 0 if conditions aren't met
       Animated.timing(this.paddingAnimation, {
