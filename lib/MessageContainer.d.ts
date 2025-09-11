@@ -41,6 +41,7 @@ interface State {
 export default class MessageContainer<TMessage extends IMessage = IMessage> extends React.PureComponent<MessageContainerProps<TMessage>, State> {
     private isInialized;
     private viewRef;
+    private paddingAnimation;
     static defaultProps: {
         messages: never[];
         user: {};
@@ -109,6 +110,8 @@ export default class MessageContainer<TMessage extends IMessage = IMessage> exte
         distanceFromEnd: number;
     }) => void;
     keyExtractor: (item: TMessage) => string;
+    componentDidMount(): void;
+    componentDidUpdate(_prevProps: MessageContainerProps<TMessage>, prevState: State): void;
     render(): React.JSX.Element;
 }
 export {};
