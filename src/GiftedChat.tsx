@@ -154,6 +154,7 @@ export interface GiftedChatProps<TMessage extends IMessage = IMessage>
   timeTextStyle?: LeftRightStyle<TextStyle>;
   /** If you use translucent status bar on Android, set this option to true. Ignored on iOS. */
   isStatusBarTranslucentAndroid?: boolean;
+  isNavigationBarTranslucentAndroid?: boolean;
   /* Controls whether messages should stick to the top when keyboard opens */
   shouldStickMessageToTop?: boolean;
   /* Custom action sheet */
@@ -278,6 +279,7 @@ function GiftedChat<TMessage extends IMessage = IMessage>(
     isKeyboardInternallyHandled = true,
     shouldStickMessageToTop = false,
     isStatusBarTranslucentAndroid,
+    isNavigationBarTranslucentAndroid,
   } = props;
 
   const actionSheetRef = useRef<ActionSheetProviderRef>(null);
@@ -301,7 +303,10 @@ function GiftedChat<TMessage extends IMessage = IMessage>(
   const [text, setText] = useState<string | undefined>(() => props.text || "");
   const [isTypingDisabled, setIsTypingDisabled] = useState<boolean>(false);
 
-  const keyboard = useAnimatedKeyboard({ isStatusBarTranslucentAndroid });
+  const keyboard = useAnimatedKeyboard({
+    isStatusBarTranslucentAndroid,
+    isNavigationBarTranslucentAndroid,
+  });
   const trackingKeyboardMovement = useSharedValue(false);
   const debounceEnableTypingTimeoutId = useRef<ReturnType<typeof setTimeout>>();
   const insets = useSafeAreaInsets();

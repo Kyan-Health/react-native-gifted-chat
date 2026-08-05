@@ -71,6 +71,7 @@ export interface GiftedChatProps<TMessage extends IMessage = IMessage> extends P
     timeTextStyle?: LeftRightStyle<TextStyle>;
     /** If you use translucent status bar on Android, set this option to true. Ignored on iOS. */
     isStatusBarTranslucentAndroid?: boolean;
+    isNavigationBarTranslucentAndroid?: boolean;
     shouldStickMessageToTop?: boolean;
     actionSheet?(): {
         showActionSheetWithOptions: (options: ActionSheetOptions, callback: (buttonIndex: number) => void | Promise<void>) => void;
